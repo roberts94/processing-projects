@@ -1,0 +1,31 @@
+int skip = 1;
+int step = 0;
+int numPoints= 500;
+float radius=740;
+float [] xcirc = new float[numPoints];
+float [] ycirc = new float[numPoints];
+float angle=TWO_PI/(float)numPoints;
+
+void mouseWheel() {
+  skip += 1;
+}
+
+void keyPressed() {
+  step += 1;
+}
+
+void setup() {
+  size(1500, 1500);
+  for (int i=0; i<numPoints; i++) {
+    xcirc[i]=width/2 + radius*sin(angle*i);
+    ycirc[i]=height/2 + radius*cos(angle*i);
+  }
+}
+
+void draw() {
+  background(255);
+  for (int i=0; i<numPoints; i++) {
+    skip = skip+step;
+    line(xcirc[i], ycirc[i], xcirc[(i+skip)%numPoints], ycirc[(i+skip)%numPoints]);
+  }
+}
