@@ -1,0 +1,44 @@
+int scl=20;
+int numParticles=10000;
+int cols;
+int rows;
+PVector [] flowfield;
+PImage img;
+Particle [] particles = new Particle[numParticles];
+
+void setup() {  
+  size(1800, 1800);
+  background(255); 
+  cols = width/scl;
+  rows = height/scl;
+  img = loadImage("flower.jpg"); 
+  img.resize(cols, rows);
+  for (int i=0; i<numParticles; i++) {
+    particles[i]= new Particle();
+  }
+  flowfield = new PVector [img.pixels.length];  
+  img.loadPixels();
+  for (int i=0; i<img.pixels.length; i++) {
+    float angle = saturation(img.pixels[i])/255*TWO_PI;
+    PVector v = PVector.fromAngle(angle); 
+    v.setMag(1);
+    flowfield[i]=v;
+  }
+}
+
+void draw() {
+  //background(255);
+  for (int i=0; i<numParticles; i++) {
+    int x = floor(particles[i].position.x/scl);
+    int y = floor(particles[i].position.y/scl);
+    int index = x+y*cols;
+    PVector force = flowfield[index];  
+    particles[i].applyForce(force); 
+    particles[i].update();
+    particles[i].edges();
+    particles[i].display();
+  }
+}
+
+void mouseClicked() {
+  saveFrame("screenshotIFF#####.png");
