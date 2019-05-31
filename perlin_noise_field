@@ -1,0 +1,51 @@
+int scl = 20;
+int numParticles=10000;
+int cols;
+int rows;
+float inc = 0.3;
+float zoff = 0;
+PVector [] flowfield;
+float angle=TWO_PI/(float)numParticles;
+Particle [] particles = new Particle[numParticles];
+
+void setup(){  
+  background(255);
+  size(1500,1500);
+  cols = floor(width/scl);
+  rows = floor(height/scl);
+  for (int i=0;i<numParticles;i++){
+    particles[i]= new Particle();
+    particles[i].position.x=width/2 + width/4*sin(angle*i);
+    particles[i].position.y=height/2 + height/4*cos(angle*i);  
+  }
+  flowfield = new PVector [rows*cols];
+}
+
+void draw(){
+ // background(255);
+  float yoff = 0;
+  for (int y=0;y<rows;y++){
+    float xoff = 0;
+    for (int x=0;x<cols;x++){
+      int index = x+y*cols;
+      float angle = noise(xoff,yoff,zoff)*TWO_PI*4;
+      PVector v = PVector.fromAngle(angle);
+      v.setMag(1);
+      flowfield[index]=v;
+      xoff+=inc;
+    }
+    yoff+=inc;
+  }
+  zoff+=0.005;
+  
+  for(int i=0;i<particles.length;i++){
+    particles[i].follow(flowfield);
+    particles[i].update();
+    particles[i].edges();
+    particles[i].display();    
+  }  
+}
+
+void mouseClicked(){
+  saveFrame("screenshotPNF#####.png");
+}
