@@ -1,0 +1,146 @@
+int numSteps = 10000;
+float col = 0;
+IntList stepList = new IntList();
+int last = 0;
+int step = 0;
+int lastTime=0;
+Walker fred = new Walker(width/2, height/2, 0, 2);
+//Walker brad = new Walker(width/2,height/2,0,4);
+
+class Walker { 
+  float xpos;
+  float ypos;
+  int direction;
+  float stepSize;
+
+  Walker (float x, float y, int d, float s) {  
+    xpos = x; 
+    ypos = y; 
+    direction = d;
+    stepSize = s;
+  } 
+  
+  void turnLeft() {  
+    if (direction==0) {
+      if (xpos-stepSize<0) {
+        line(xpos, ypos, 0, ypos);
+        line(width, ypos, width-stepSize+xpos, ypos);
+        xpos = width-stepSize+xpos;
+        direction=3;
+      } else {      
+        line(xpos, ypos, xpos-stepSize, ypos);
+        xpos = xpos-stepSize;
+        direction = 3;
+      }
+    } else if (direction==1) {
+      if (ypos-stepSize<0) {
+        line(xpos, ypos, xpos, 0);
+        line(xpos, height, xpos, height-stepSize+ypos);
+        ypos = height-stepSize+ypos;
+        direction = 0;
+      } else {
+        line(xpos, ypos, xpos, ypos-stepSize);
+        ypos = ypos-stepSize;
+        direction = 0;
+      }
+    } else if (direction==2) {
+      if  (xpos+stepSize>width) {
+        line(xpos, ypos, width, ypos);
+        line(0, ypos, stepSize-width+xpos, ypos);
+        xpos = stepSize-width+xpos;
+        direction = 1;
+      } else {
+        line(xpos, ypos, xpos+stepSize, ypos);
+        xpos = xpos + stepSize;
+        direction = 1;
+      }
+    } else {
+      if (ypos+stepSize>height) {
+        line(xpos, ypos, xpos, height);
+        line(xpos, 0, xpos, stepSize-height+ypos);
+        ypos = stepSize-height+ypos;
+        direction = 2;
+      } else {        
+        line(xpos, ypos, xpos, ypos+stepSize);
+        ypos = ypos+stepSize;
+        direction = 2;
+      }
+    }
+  } 
+
+  void turnRight() {
+    if (direction==0) {
+      if  (xpos+stepSize>width) {
+        line(xpos, ypos, width, ypos);
+        line(0, ypos, stepSize-width+xpos, ypos);
+        xpos = stepSize-width+xpos;
+        direction = 1;
+      } else {
+        line(xpos, ypos, xpos+stepSize, ypos);
+        xpos = xpos + stepSize;
+        direction = 1;
+      }
+    } else if (direction==1) {
+      if (ypos+stepSize>height) {
+        line(xpos, ypos, xpos, height);
+        line(xpos, 0, xpos, stepSize-height+ypos);
+        ypos = stepSize-height+ypos;
+        direction = 2;
+      } else {        
+        line(xpos, ypos, xpos, ypos+stepSize);
+        ypos = ypos+stepSize;
+        direction = 2;
+      }
+    } else if (direction==2) {
+      if (xpos-stepSize<0) {
+        line(xpos, ypos, 0, ypos);
+        line(width, ypos, width-stepSize+xpos, ypos);
+        xpos = width-stepSize+xpos;
+        direction=3;
+      } else {      
+        line(xpos, ypos, xpos-stepSize, ypos);
+        xpos = xpos-stepSize;
+        direction = 3;
+      }
+    } else {
+      if (ypos-stepSize<0) {
+        line(xpos, ypos, xpos, 0);
+        line(xpos, height, xpos, height-stepSize+ypos);
+        ypos = height-stepSize+ypos;
+        direction = 0;
+      } else {
+        line(xpos, ypos, xpos, ypos-stepSize);
+        ypos = ypos-stepSize;
+        direction = 0;
+      }
+    }
+  } 
+}
+
+void setup() {
+  size(2000, 1501);
+  background(0);
+  stepList.append(1);
+}
+
+void draw() {
+  stepList.append((last+1)%2);
+  if (stepList.get(step)==0) {
+    fred.turnRight();  
+    //brad.turnRight();
+    last = (last+1)%2;
+  } else {
+    fred.turnLeft();
+    //brad.turnLeft();
+    stepList.append((last+1)%2);
+    last = (last+1)%2;
+  }
+  stroke((cos(col)+1)*127.5);
+  col+= PI/50;
+  step+=1;
+  
+  if( millis() - lastTime >= 300000){
+    saveFrame("screenshot-######.png");
+    lastTime = millis();
+  }
+}
