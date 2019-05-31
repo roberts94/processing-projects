@@ -1,0 +1,61 @@
+int numParticles=1000;
+float inc = 0.0009;
+float zoff = 0;
+float scale;
+float time;
+PVector [] flowfield;
+boolean vidtog = false;
+Particle [] particles = new Particle[numParticles];
+
+void setup(){  
+  background(255);
+  size(1000,1000);
+  for (int i=0;i<numParticles;i++){
+    particles[i]= new Particle();
+  }
+  flowfield = new PVector [width*height]; 
+  setVectors();
+}
+
+void draw(){
+  for (int i=0; i<numParticles; i++) {
+    int x = (int)(particles[i].position.x);
+    int y = (int)(particles[i].position.y);
+    int index = x+y*width;
+    PVector force = flowfield[index];
+    particles[i].update();
+    particles[i].applyForce(force); 
+    particles[i].display();
+  }
+  if (time>15){
+    changez();
+    time=0;
+    vidtog=true;
+  }
+  time+=0.1;
+  //if (vidtog==true){
+  //  saveFrame("frames/####.tiff");
+ // }
+}
+
+void changez(){
+  background(255);
+  zoff += 0.51;
+  setVectors();
+}
+   
+void setVectors(){  
+  float yoff = 0;
+  for (int y=0;y<height;y++){
+    float xoff = 0;
+    for (int x=0;x<width;x++){
+      int index = x+y*width;
+      float angle = noise(xoff,yoff,zoff)*TWO_PI*4;
+      PVector v = PVector.fromAngle(angle);
+      v.setMag(20);
+      flowfield[index]=v;
+      xoff+=inc;
+    }
+    yoff+=inc;
+  }
+}
